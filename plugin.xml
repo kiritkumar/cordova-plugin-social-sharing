@@ -80,6 +80,13 @@
     <config-file target="AndroidManifest.xml" parent="/*">
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     </config-file>
+    
+    <config-file target="AndroidManifest.xml" parent="/manifest/queries">
+        <package android:name="com.instagram.android" />
+        <package android:name="com.facebook.katana" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.whatsapp" />
+    </config-file>
 
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
       <provider android:authorities="${applicationId}.sharing.provider" android:exported="false" android:grantUriPermissions="true" android:name="nl.xservices.plugins.FileProvider">
