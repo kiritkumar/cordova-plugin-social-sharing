@@ -1,3 +1,5 @@
+THIS PLUGIN IS NOW IN VERSION 6.0.3
+
 # PhoneGap / Cordova Social Sharing plugin
 
 [![NPM version][npm-image]][npm-url]
