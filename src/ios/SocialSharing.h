@@ -1,12 +1,15 @@
 #import <Cordova/CDV.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#import <LinkPresentation/LPLinkMetadata.h>
 
-@interface SocialSharing : CDVPlugin <UIPopoverControllerDelegate, MFMailComposeViewControllerDelegate, UIDocumentInteractionControllerDelegate>
+API_AVAILABLE(ios(13.0))
+@interface SocialSharing : CDVPlugin <UIPopoverControllerDelegate, MFMailComposeViewControllerDelegate, UIDocumentInteractionControllerDelegate,UIActivityItemSource>
 
 @property (nonatomic, strong) MFMailComposeViewController *globalMailComposer;
 @property (nonatomic, strong) UIDocumentInteractionController * documentInteractionController;
 @property (retain) NSString * tempStoredFile;
 @property (retain) CDVInvokedUrlCommand * command;
+@property (retain) LPLinkMetadata * metadata;
 
 - (void)available:(CDVInvokedUrlCommand*)command;
 - (void)setIPadPopupCoordinates:(CDVInvokedUrlCommand*)command;

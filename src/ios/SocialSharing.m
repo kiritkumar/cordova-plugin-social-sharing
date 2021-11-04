@@ -19,6 +19,7 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 }
 
 - (void)pluginInitialize {
+    
 }
 
 - (void)available:(CDVInvokedUrlCommand*)command {
@@ -28,6 +29,18 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
   }
   CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:avail];
   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController{
+    return @"";
+}
+
+- (id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(UIActivityType)activityType{
+    return _metadata.originalURL;
+}
+
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController{
+    return _metadata;
 }
 
 - (NSString*)getIPadPopupCoordinates {
@@ -74,25 +87,26 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
       [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
       return;
     }
-
+    
+    _metadata = [[LPLinkMetadata alloc] init];
     NSString *message   = options[kShareOptionMessage];
     NSString *subject   = options[kShareOptionSubject];
     NSArray  *filenames = options[kShareOptionFiles];
     NSString *urlString = options[kShareOptionUrl];
     NSString *iPadCoordString = options[kShareOptionIPadCoordinates];
     NSArray *iPadCoordinates;
-
+    
     if (iPadCoordString != nil && iPadCoordString != [NSNull null]) {
       iPadCoordinates = [iPadCoordString componentsSeparatedByString:@","];
     } else {
       iPadCoordinates = @[];
     }
 
-
     NSMutableArray *activityItems = [[NSMutableArray alloc] init];
 
     if (message != (id)[NSNull null] && message != nil) {
-    [activityItems addObject:message];
+        [activityItems addObject:message];
+        _metadata.title = message;
     }
 
     if (filenames != (id)[NSNull null] && filenames != nil && filenames.count > 0) {
@@ -111,11 +125,16 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 
     if (urlString != (id)[NSNull null] && urlString != nil) {
         [activityItems addObject:[NSURL URLWithString:[urlString SSURLEncodedString]]];
+        _metadata.originalURL = [NSURL URLWithString:[urlString SSURLEncodedString]];
     }
 
     UIActivity *activity = [[UIActivity alloc] init];
     NSArray *applicationActivities = [[NSArray alloc] initWithObjects:activity, nil];
-    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:applicationActivities];
+    
+    NSString *iconPath = [NSBundle.mainBundle pathForResource:@"shareicon" ofType:@"png"];
+    _metadata.iconProvider = [[NSItemProvider alloc] initWithContentsOfURL:[[NSURL alloc] initFileURLWithPath: iconPath]];
+
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems: @[self] applicationActivities:applicationActivities];
     if (subject != (id)[NSNull null] && subject != nil) {
       [activityVC setValue:subject forKey:@"subject"];
     }
@@ -770,9 +789,9 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
           file = [NSURL fileURLWithPath:[self storeInFile:[[name componentsSeparatedByString:@"="] lastObject] fileData:fileData]];
         }
       } else {
-	    NSString *name = (NSString*)[[fileName componentsSeparatedByString: @"/"] lastObject];
+        NSString *name = (NSString*)[[fileName componentsSeparatedByString: @"/"] lastObject];
         file = [NSURL fileURLWithPath:[self storeInFile:[name componentsSeparatedByString: @"?"][0] fileData:fileData]];
-	  }
+      }
     } else if ([fileName hasPrefix:@"www/"]) {
       NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
       NSString *fullPath = [NSString stringWithFormat:@"%@/%@", bundlePath, fileName];
