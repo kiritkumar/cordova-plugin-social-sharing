@@ -34,8 +34,6 @@
   <!-- ios -->
   <platform name="ios">
 
-    <hook type="before_plugin_install" src="scripts/copyAssetsFolder.js" />
-
     <config-file target="config.xml" parent="/*">
       <feature name="SocialSharing">
         <param name="ios-package" value="SocialSharing"/>
@@ -57,7 +55,6 @@
     <source-file src="src/ios/NSString+SSURLEncoding.m"/>
     <header-file src="src/ios/SocialSharing.h"/>
     <source-file src="src/ios/SocialSharing.m"/>
-    <source-file src="assets/shareicon.png"/>
 
     <framework src="Social.framework" weak="true" />
     <framework src="MessageUI.framework" weak="true" />

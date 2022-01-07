@@ -130,9 +130,12 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 
     UIActivity *activity = [[UIActivity alloc] init];
     NSArray *applicationActivities = [[NSArray alloc] initWithObjects:activity, nil];
+    NSString *icon = [[[[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIcons"] objectForKey:@"CFBundlePrimaryIcon"] objectForKey:@"CFBundleIconFiles"] lastObject];
+    UIImage *iconimage = [UIImage imageNamed:icon];
+    NSURL *iconPath = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"TempImage.png"]];
+    [UIImagePNGRepresentation(iconimage) writeToURL:iconPath atomically:true];
     
-    NSString *iconPath = [NSBundle.mainBundle pathForResource:@"shareicon" ofType:@"png"];
-    _metadata.iconProvider = [[NSItemProvider alloc] initWithContentsOfURL:[[NSURL alloc] initFileURLWithPath: iconPath]];
+    _metadata.iconProvider = [[NSItemProvider alloc] initWithContentsOfURL:iconPath];
 
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems: @[self] applicationActivities:applicationActivities];
     if (subject != (id)[NSNull null] && subject != nil) {
